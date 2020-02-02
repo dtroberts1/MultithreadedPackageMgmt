@@ -1,0 +1,38 @@
+package stations;
+
+import conveyors.SynchronizedConveyor;
+
+public class Station implements Runnable {
+
+	private int workload; // workload remaining
+	public SynchronizedConveyor inConveyor; // current output conveyer
+	public SynchronizedConveyor outConveyor; // current input conveyer
+	public int stationID;
+	public Station(int id, int workload, SynchronizedConveyor in, SynchronizedConveyor out) {
+		this.workload = workload;
+		this.stationID = id;
+		this.inConveyor = in;
+		System.out.print("Station " + id + ": In-Connection set to conveyor C" + this.inConveyor.getConveyorID() + "\n");
+		this.outConveyor = out;
+		System.out.print("Station " + id + ": Out-Connection set to conveyor C" + this.outConveyor.getConveyorID() + "\n");
+
+	}
+	@Override
+    public void run() {
+		try {
+			// Thread Starts...
+			
+			
+			// Thread Terminates...
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	public int getWorkload() {
+		return this.workload;
+	}
+	public void setWorkload(int workload) {
+		this.workload = workload;
+	}
+}

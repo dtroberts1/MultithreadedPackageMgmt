@@ -1,0 +1,49 @@
+package stations;
+
+import conveyors.SynchronizedConveyor;
+
+public class Station implements Runnable {
+
+	private int workload; // workload remaining
+	public SynchronizedConveyor inConveyor; // current output conveyer
+	public SynchronizedConveyor outConveyor; // current input conveyer
+	private int conveyorsSet = 0;
+	private int stationID;
+	public Station(int id, int workload, SynchronizedConveyor in, SynchronizedConveyor out) {
+		this.workload = workload;
+		this.stationID = id;
+		this.inConveyor = in;
+		this.outConveyor = out;
+	}
+	public void setConnections() {
+		// If both Connections are set, Display status
+		if ((this.inConveyor.initializeConnection(this)) && (this.outConveyor.initializeConnection(this)))
+		{
+			System.out.print("Routing Station " + this.stationID + ": Workload set" + 
+					". Station " + this.stationID + " has a total of " + this.workload + " package groups to move.\n");
+		}
+	}
+	@Override
+    public void run() {
+		setConnections();
+		//System.out.print
+		try {
+			// Thread Starts...
+			
+			
+			// Thread Terminates...
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	public int getID() {
+		return this.stationID;
+	}
+	public int getWorkload() {
+		return this.workload;
+	}
+	public void setWorkload(int workload) {
+		this.workload = workload;
+	}
+}

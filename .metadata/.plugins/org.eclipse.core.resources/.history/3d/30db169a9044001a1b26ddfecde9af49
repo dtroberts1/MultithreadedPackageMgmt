@@ -1,0 +1,41 @@
+import java.io.File;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import stations.Station;
+
+
+
+public class MultiThreadedApp {
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		 File file = new File("src/resources/config.txt");
+		 int nbrRoutingStations;
+		 int []allWork;
+		 
+		 // Create Instance of Executer Service for the number of stations
+		 ExecutorService executerService = Executors.newCachedThreadPool();
+	 
+		 try (Scanner scanner = new Scanner(file)){
+			 nbrRoutingStations = Integer.parseInt(scanner.nextLine());
+			 allWork = new int[nbrRoutingStations];
+			 scanner.reset();
+			   for (int i = nbrRoutingStations;i > 0; i++) {
+				   	int[] conveyors;
+				   	allWork[i] = Integer.parseInt(scanner.nextLine());
+				   	conveyors = getConveyorsPerStation(i - 1, nbrRoutingStations);
+					executerService.execute(new Station(i, allWork[i - 1], conveyors));
+					//System.out.print("Values are " + conveyors[0] + " and " + conveyors[1]);
+			   }
+			   
+			   scanner.close();
+		   } catch (Exception e) {
+			   e.printStackTrace();
+		   }
+	}
+	public static int[] getConveyorsPerStation(int stationNbr, int nbrStations) {
+		int []returnArray = {stationNbr,((stationNbr - 1 < 0) ? nbrStations : (stationNbr - 1))};
+		return returnArray;
+	}
+}

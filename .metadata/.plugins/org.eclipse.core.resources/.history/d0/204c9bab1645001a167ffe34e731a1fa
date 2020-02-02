@@ -1,0 +1,109 @@
+package conveyors;
+import java.util.concurrent.locks.ReentrantLock;
+
+import stations.Station;
+
+import java.util.concurrent.locks.Condition;
+
+
+public class SynchronizedConveyor{
+	
+	private int conveyorID;
+	private ReentrantLock accessLock = new ReentrantLock();
+	private Condition canUse = accessLock.newCondition();
+	private int conveyor = -1;
+	private boolean inUse = false;
+	
+	public SynchronizedConveyor(int id) {
+		this.conveyorID = id;
+	}
+	public int getConveyorID() {
+		return this.conveyorID;
+	}
+	public void setConveyorID(int id) {
+		this.conveyorID = id;
+	}
+	public ReentrantLock getLockObj() {
+		return this.accessLock;
+	}
+	public boolean initializeConnection(Station s) {
+		System.out.print("Routing Station " + s.getID() + ": input connection is " + 
+		"set to conveyor number C" + this.getConveyorID() + "\n");
+		
+		if (this.accessLock.tryLock()) {
+			try {
+				System.out.print("Routing Station " + s.getID() + ": input connection is " + 
+				"set to conveyor number C" + this.getConveyorID() + "\n");
+			}catch (Exception e) {
+		//		e.printStackTrace();
+			}
+			finally {
+				this.accessLock.unlock();
+			}
+			return true;
+		}
+		else {
+			return false;
+		}
+		
+		//return true;
+	}
+	// input = true -> input
+	// input = false -> output
+	public boolean lockConveyor(Station s, boolean input) {
+		if (input) {
+			if (this.accessLock.tryLock()) {
+				try {
+					System.out.print("Routing Station " + s.getID() + ": holds lock on " + "input" +
+					" conveyor C" + this.getConveyorID() + "\n");
+				}catch (Exception e) {
+		//			e.printStackTrace();
+				}
+				return true;
+			}
+			else {
+				
+				try {
+					// Since input conveyor lock failed, unlock the output conveyor (if it's locked)
+					System.out.print("Routing Station " + s.getID() + ". Unable to lock input conveyor." +
+					" Releasing lock on output conveyor C" + this.getConveyorID() + "\n");
+					if (s.outConveyor.accessLock.isLocked())
+						s.outConveyor.accessLock.unlock();
+				}
+				catch(Exception e) {
+		//			e.printStackTrace();
+				}
+				
+				return false;
+			}		
+		}
+		else { // If attempting to lock output Conveyor
+			if (this.accessLock.tryLock()) {
+				try {
+					System.out.print("Routing Station " + s.getID() + ": holds lock on " + "output" +
+					" conveyor C" + this.getConveyorID() + "\n");
+				}catch (Exception e) {
+	//				e.printStackTrace();
+				}
+
+				return true;
+			}
+			else {
+				try {
+					System.out.print("Routing Station " + s.getID() + ". Unable to lock output conveyor." +
+					" Releasing lock on input conveyor C" + this.getConveyorID() + "\n");
+					if (s.inConveyor.accessLock.isLocked())
+						s.inConveyor.accessLock.unlock();
+				}catch(Exception e) {
+	//				e.printStackTrace();
+				}
+
+				return false;
+			}		
+		}
+	}	
+	public void unlockConveyor() {
+		this.accessLock.unlock();
+	}
+
+}

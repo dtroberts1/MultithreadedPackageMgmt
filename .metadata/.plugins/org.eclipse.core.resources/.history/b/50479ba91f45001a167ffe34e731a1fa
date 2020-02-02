@@ -1,0 +1,93 @@
+package stations;
+
+import java.util.Random;
+
+import conveyors.SynchronizedConveyor;
+
+public class Station implements Runnable {
+
+	private static Random randomGenerator = new Random();
+	private int workload; // workload remaining
+	public SynchronizedConveyor inConveyor; // current output conveyer
+	public SynchronizedConveyor outConveyor; // current input conveyer
+	private int stationID;
+	public Station(int id, int workload, SynchronizedConveyor in, SynchronizedConveyor out) {
+		this.workload = workload;
+		this.stationID = id;
+		this.inConveyor = in;
+		this.outConveyor = out;
+	}
+	public void setConnection(int conveyor) {
+		if (conveyor == 0) {
+			this.inConveyor.initializeConnection(this);
+		}else {
+			this.outConveyor.initializeConnection(this);
+		}
+	}
+	@Override
+    public void run() {
+		// Set Connections for this station
+		for (int i = 0; i < 2; i++) {
+			try {
+			//	Thread.sleep(randomGenerator.nextInt(30));
+				setConnection(i);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.print("Routing Station " + this.stationID + ": Workload set" + 
+				". Station " + this.stationID + " has " + this.workload + " package groups to move.\n");
+		
+		// For each Conveyor
+		
+		// Attempt to get lock
+			// If can get lock, attempt to get lock on the other one
+				// If it can also get lock on the other one, move package across and release both locks
+	
+				// If it cannot get lock on the other one, release this lock 
+	
+			// If cannot get lock, wait and try again.
+		//
+		// Repeat process again in the opposite order (it has to navigate a package both ways)
+		// Repeat this entire process up to the number of "workload" times
+		while (this.workload > 0) {
+			try {
+				if (this.inConveyor.lockConveyor(this, true)) {
+					try {
+						if (this.outConveyor.lockConveyor(this, false)) {
+							workload--;
+							// Print Successfully Moved package on __
+							System.out.print("Routing Station " + this.stationID + 
+									" sucessfully moves packages on conveyor C" + this.inConveyor.getConveyorID() + "\n");
+							System.out.print("Routing Station " + this.stationID + 
+									" sucessfully moves packages on conveyor C" + this.outConveyor.getConveyorID() + "\n");						// X packages left to move
+							System.out.print("Routing Station " + this.stationID +
+									" has " + this.workload + " package" + ((workload > 1) ? "groups" : "group") + " left to move.\n");
+							//if (this.inConveyor.getLockObj().isLocked())
+								this.inConveyor.getLockObj().unlock();
+							//if (this.outConveyor.getLockObj().isLocked())
+								this.outConveyor.getLockObj().unlock();
+						}
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		
+		}
+		System.out.print("* * Station " + this.getID() + ": workload sucessfully completed. * *\n");
+	}
+	public int getID() {
+		return this.stationID;
+	}
+	public int getWorkload() {
+		return this.workload;
+	}
+	public void setWorkload(int workload) {
+		this.workload = workload;
+	}
+}

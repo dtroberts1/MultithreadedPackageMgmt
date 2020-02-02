@@ -1,0 +1,7 @@
+
+
+public class MultiThreadedApp {
+	public static void main() {
+		System.out.print("Testing run");
+	}
+}

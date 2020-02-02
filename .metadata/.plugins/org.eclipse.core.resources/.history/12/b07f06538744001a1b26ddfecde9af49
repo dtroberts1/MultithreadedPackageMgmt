@@ -1,0 +1,32 @@
+package stations.copy;
+
+
+public class Station implements Runnable {
+
+	private int workload; // workload remaining
+	private int inConveyor; // current output conveyer
+	private int outConveyor; // current input conveyer
+	public Station(int workload) {
+		this.workload = workload;
+		this.inConveyor = -1;
+		this.outConveyor = -1;
+	}
+	@Override
+    public void run() {
+		try {
+			// Thread Starts...
+			
+			
+			// Thread Terminates...
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	public int getWorkload() {
+		return this.workload;
+	}
+	public void setWorkload(int workload) {
+		this.workload = workload;
+	}
+}

@@ -1,0 +1,3 @@
+INDEX VERSION 1.131+C:\Users\drobe\Dropbox\Enterprise Computing\Project 2\.metadata\.plugins\org.eclipse.jdt.core
+2191939120.index
+1677148916.index
